@@ -15,7 +15,6 @@ export const useProducts = () => {
   const offset = (Number(page) - 1) * Number(limit);
 
   const price = searchParams.get('price') || 'any';
-  console.log({ price });
 
   let minPrice = undefined;
   let maxPrice = undefined;
