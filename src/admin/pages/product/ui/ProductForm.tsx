@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { useForm, Watch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,21 @@ interface Props {
   title: string;
   subtitle: string;
   product: Product;
+  isPending: boolean;
+
+  //Metodos
+  onSubmit: (productLike: Partial<Product>) => Promise<void>;
 }
 
 const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
-export const ProductForm = ({ title, subtitle, product }: Props) => {
+export const ProductForm = ({
+  title,
+  subtitle,
+  product,
+  onSubmit,
+  isPending,
+}: Props) => {
   const [dragActive, setDragActive] = useState(false);
 
   const {
@@ -103,23 +113,19 @@ export const ProductForm = ({ title, subtitle, product }: Props) => {
     console.log(files);
   };
 
-  const onSubmit = (productLike: Product) => {
-    console.log('onSubmit', productLike);
-  };
-
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="flex justify-between items-center">
         <AdminTitle title={title} subtitle={subtitle} />
         <div className="flex justify-end mb-10 gap-4">
-          <Button variant="outline">
+          <Button variant="outline" type="button">
             <Link to="/admin/products" className="flex items-center gap-2">
               <X className="w-4 h-4" />
               Cancelar
             </Link>
           </Button>
 
-          <Button>
+          <Button type="submit" disabled={isPending}>
             <SaveAll className="w-4 h-4" />
             Guardar cambios
           </Button>
