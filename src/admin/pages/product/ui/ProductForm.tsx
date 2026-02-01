@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import { Link } from 'react-router';
-import { useForm, Watch } from 'react-hook-form';
+import { useForm } from 'react-hook-form';
 
 import { AdminTitle } from '@/admin/components/AdminTitle';
 import { Button } from '@/components/ui/button';
@@ -12,11 +12,27 @@ interface Props {
   title: string;
   subtitle: string;
   product: Product;
+  isPending: boolean;
+
+  //Metodos
+  onSubmit: (
+    productLike: Partial<Product> & { files?: File[] },
+  ) => Promise<void>;
 }
 
 const availableSizes: Size[] = ['XS', 'S', 'M', 'L', 'XL', 'XXL'];
 
-export const ProductForm = ({ title, subtitle, product }: Props) => {
+interface FormInputs extends Product {
+  files?: File[];
+}
+
+export const ProductForm = ({
+  title,
+  subtitle,
+  product,
+  onSubmit,
+  isPending,
+}: Props) => {
   const [dragActive, setDragActive] = useState(false);
 
   const {
@@ -26,16 +42,19 @@ export const ProductForm = ({ title, subtitle, product }: Props) => {
     setValue,
     watch,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormInputs>({
     defaultValues: product,
   });
 
   //console.log({ product });
   const labelInputRef = useRef<HTMLInputElement>(null);
+  // const [files, setFiles] = useState<File[]>([]);
 
   const currentStock = watch('stock');
   const selectedSizes = watch('sizes');
   const selectedTags = watch('tags');
+  const currentFiles = watch('files');
+  const currentImages = watch('images');
   // console.log(selectedSizes);
 
   const addTag = () => {
@@ -68,6 +87,11 @@ export const ProductForm = ({ title, subtitle, product }: Props) => {
     setValue('sizes', Array.from(sizeSet));
   };
 
+  const removeImages = (index: number) => {
+    const currentFiles = getValues('images') || [];
+    const updated = currentFiles.filter((_, i) => i !== index);
+    setValue('images', updated);
+  };
   //   const addSize = (size: Size) => {
   //   const currentSizes = getValues('sizes') ?? [];
   //   if (!currentSizes.includes(size)) {
@@ -95,31 +119,41 @@ export const ProductForm = ({ title, subtitle, product }: Props) => {
     e.stopPropagation();
     setDragActive(false);
     const files = e.dataTransfer.files;
-    console.log(files);
+
+    if (!files) return;
+
+    // setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    console.log(files);
-  };
+    if (!files) return;
 
-  const onSubmit = (productLike: Product) => {
-    console.log('onSubmit', productLike);
+    // setFiles((prev) => [...prev, ...Array.from(files)]);
+    const currentFiles = getValues('files') || [];
+    setValue('files', [...currentFiles, ...Array.from(files)]);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form
+      onSubmit={handleSubmit(async (data) => {
+        await onSubmit(data);
+        setValue('files', []);
+      })}
+    >
       <div className="flex justify-between items-center">
         <AdminTitle title={title} subtitle={subtitle} />
         <div className="flex justify-end mb-10 gap-4">
-          <Button variant="outline">
+          <Button variant="outline" type="button">
             <Link to="/admin/products" className="flex items-center gap-2">
               <X className="w-4 h-4" />
               Cancelar
             </Link>
           </Button>
 
-          <Button>
+          <Button type="submit" disabled={isPending}>
             <SaveAll className="w-4 h-4" />
             Guardar cambios
           </Button>
@@ -431,7 +465,7 @@ export const ProductForm = ({ title, subtitle, product }: Props) => {
                   Imágenes actuales
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
-                  {product.images.map((image, index) => (
+                  {currentImages.map((image, index) => (
                     <div key={index} className="relative group">
                       <div className="aspect-square bg-slate-100 rounded-lg border border-slate-200 flex items-center justify-center">
                         <img
@@ -440,13 +474,41 @@ export const ProductForm = ({ title, subtitle, product }: Props) => {
                           className="w-full h-full object-cover rounded-lg"
                         />
                       </div>
-                      <button className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <button
+                        type="button"
+                        onClick={() => removeImages(index)}
+                        className="cursor-pointer absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                      >
                         <X className="h-3 w-3" />
                       </button>
                       <p className="mt-1 text-xs text-slate-600 truncate">
-                        {image}
+                        {image.substring(
+                          image.lastIndexOf('/') + 1,
+                          image.length,
+                        )}
                       </p>
                     </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Imágenes por cargar */}
+              <div className="mt-6 space-y-3">
+                <h3
+                  className={cn('text-sm font-medium text-slate-700', {
+                    hidden: !currentFiles || currentFiles.length === 0,
+                  })}
+                >
+                  Imágenes por cargar
+                </h3>
+                <div className="grid grid-cols-2 gap-3">
+                  {currentFiles?.map((file, index) => (
+                    <img
+                      src={URL.createObjectURL(file)}
+                      alt="Product"
+                      key={index}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
                   ))}
                 </div>
               </div>

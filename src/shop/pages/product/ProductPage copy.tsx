@@ -1,4 +1,4 @@
-import { useCounterStore } from '@/auth/store/auth.store';
+import { useCounterStore } from '@/auth/store/auth.store copy';
 import { Button } from '@/components/ui/button';
 
 export const ProductPage = () => {

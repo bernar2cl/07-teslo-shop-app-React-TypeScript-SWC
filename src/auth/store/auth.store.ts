@@ -55,7 +55,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
       return true;
     } catch (error) {
-      //console.error(error);
+      console.error(error);
       localStorage.removeItem('token');
       set({ user: null, token: null, authStatus: 'not-authenticated' });
       return false;
@@ -75,7 +75,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
       });
       return true;
     } catch (error) {
-      //console.error(error);
+      console.error(error);
       set({
         user: undefined,
         token: undefined,
@@ -104,7 +104,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
 
       return true;
     } catch (error) {
-      //console.error(error);
+      console.error(error);
       localStorage.removeItem('token');
       set({ user: null, token: null, authStatus: 'not-authenticated' });
       return false;
