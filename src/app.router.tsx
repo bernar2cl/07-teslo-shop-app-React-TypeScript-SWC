@@ -1,4 +1,4 @@
-import { createBrowserRouter, Navigate } from 'react-router';
+import { createBrowserRouter, createHashRouter, Navigate } from 'react-router';
 import { ShopLayout } from './shop/layouts/ShopLayout';
 import { HomePage } from './shop/pages/home/HomePage';
 import { ProductPage } from './shop/pages/product/ProductPage';
@@ -19,7 +19,10 @@ import {
 const AuthLayout = lazy(() => import('./auth/layouts/AuthLayout'));
 const AdminLayout = lazy(() => import('./admin/layouts/AdminLayout'));
 
-export const appRouter = createBrowserRouter([
+//La sugerencia es createBrowserRouter , sin embargo, al llevarlo a producciòn
+//No reconoce el index y la forma de solucionar esto es cambiarlo por createHashRouter
+// export const appRouter = createBrowserRouter([
+export const appRouter = createHashRouter([
   // Main routes
 
   {
