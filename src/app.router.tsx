@@ -19,7 +19,7 @@ import {
 const AuthLayout = lazy(() => import('./auth/layouts/AuthLayout'));
 const AdminLayout = lazy(() => import('./admin/layouts/AdminLayout'));
 
-//La sugerencia es createBrowserRouter , sin embargo, al llevarlo a producciòn
+//La sugerencia es createBrowserRouter , sin embargo, al llevarlo a producciòn .
 //No reconoce el index y la forma de solucionar esto es cambiarlo por createHashRouter
 // export const appRouter = createBrowserRouter([
 export const appRouter = createHashRouter([
