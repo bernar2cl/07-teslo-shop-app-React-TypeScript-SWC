@@ -5,7 +5,7 @@ import { Label } from '@/components/ui/label';
 import { CustomLogo } from '@/components/custom/CustomLogo';
 import { Link, useNavigate } from 'react-router';
 import { useAuthStore } from '@/auth/store/auth.store';
-import { useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 export const RegisterPage = () => {
@@ -15,7 +15,7 @@ export const RegisterPage = () => {
 
   const [isPosting, setIsPosting] = useState(false);
 
-  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsPosting(true);
 

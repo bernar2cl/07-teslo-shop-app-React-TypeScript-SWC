@@ -5,7 +5,7 @@ import { sleep } from '@/lib/sleep';
 export const createUpdateProductAction = async (
   productLike: Partial<Product> & { files?: File[] },
 ): Promise<Product> => {
-  const { id, user, images = [], files = [], ...rest } = productLike;
+  const { id, images = [], files = [], ...rest } = productLike;
 
   await sleep(1500);
 
