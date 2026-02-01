@@ -23,7 +23,7 @@ export const getProductByIdAction = async (id: string): Promise<Product> => {
 
   const images = data.images.map((image) => {
     if (image.includes('http')) return image;
-    return `${import.meta.env.VITE_API_URL}/file/product/${image}`;
+    return `${import.meta.env.VITE_API_URL}/files/product/${image}`;
   });
 
   return {
